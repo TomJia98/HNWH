@@ -1,28 +1,38 @@
 const { AuthenticationError } = require("apollo-server-express");
-const { User, Person, LinkingCode } = require("../models");
+const { Bay, Item, HistoryEvent, Employee } = require("../models");
 const { signToken } = require("../utils/auth");
-const { GraphQLDateTime } = require("graphql-iso-date");
-
-const customScalarResolver = {
-  Date: GraphQLDateTime,
-};
+// const { GraphQLDateTime } = require("graphql-iso-date");
 
 const resolvers = {
   Query: {
-    persons: async (parent, args, context) => {
+    item: async (parent, { productCode }, context) => {
+      // search for item by product code
       const userId = context.user._id;
       if (!userId) {
-        return new Error("user is not logged in");
+        return new Error("please log in to see items");
       }
-      return await Person.find({ createdBy: userId });
+      return await Item.find({ productCode });
     },
-    person: async (parent, { personId }) => {
-      const person = await Person.findById(personId);
-      return person;
+    employee: async (parent, args, context) => {
+      //sending through all a large list of args, not sure whats going to  be the best at this point in time
+      const userId = context.user._id;
+      const isAdmin = context.user.isAdmin;
+      if (!userId || !isAdmin) {
+        return new Error("please log in as an admin to see employee data");
+      }
+      const employee = await Employee.find(args);
+      return employee;
     },
-    users: async (parent, args, context) => {
-      const users = await User.find();
-      return users; //only used for checking data, not used in full deploy
+    //---------------------------------^up to^----------------------------------\\
+
+    employees: async (parent, args, context) => {
+      const userId = context.user._id;
+      const isAdmin = context.user.isAdmin;
+      if (!userId || !isAdmin) {
+        return new Error("please log in as an admin to see employees");
+      }
+      const employees = await User.find();
+      return employees;
     },
   },
   Mutation: {

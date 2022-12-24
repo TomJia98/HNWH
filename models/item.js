@@ -9,4 +9,21 @@ const itemSchema = new Schema({
     type: String,
     required: false,
   },
+  isInStock: {
+    type: Boolean,
+    required: true,
+  },
+  onHand: {
+    type: Number,
+  },
+  inBays: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Bay",
+    },
+  ],
 });
+
+const Item = model("Item", itemSchema);
+
+module.exports = { Item };

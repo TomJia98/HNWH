@@ -1,8 +1,8 @@
-const { schema, model, Schema, default: mongoose } = require("mongoose");
+const { schema, model, Schema } = require("mongoose");
 
 const historyEventSchema = new Schema({
   employee: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     ref: "Employee",
   },
   date: {
@@ -10,8 +10,15 @@ const historyEventSchema = new Schema({
     required: true,
   },
   item: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     ref: "Item",
+  },
+  event: {
+    type: String,
+  },
+  location: {
+    type: Schema.Types.ObjectId,
+    ref: "Bay",
   },
 });
 

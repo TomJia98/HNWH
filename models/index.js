@@ -1,3 +1,6 @@
-const { Person, User, LinkingCode } = require("./Profile");
+const { Bay } = require("./bay");
+const { Item } = require("./item");
+const { HistoryEvent } = require("./historyEvent");
+const { Employee } = require("./employee");
 
-module.exports = { Person, User, LinkingCode };
+module.exports = { Bay, Item, HistoryEvent, Employee };
