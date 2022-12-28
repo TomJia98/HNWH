@@ -72,6 +72,16 @@ const resolvers = {
         return new Error(e);
       }
     },
+
+    updateEmployee: async (parent, { employeeID }, context) => {
+      const userId = context.user._id;
+      const isAdmin = context.user.isAdmin;
+      if (!userId || !isAdmin) {
+        return new Error("please log in as an admin to update an employee");
+      }
+
+      const updatedEmployee = await Employee.findOneAndUpdate({ employeeID });
+    },
     deleteEmployee: async (parent, { employeeID }, context) => {
       const userId = context.user._id;
       const isAdmin = context.user.isAdmin;
