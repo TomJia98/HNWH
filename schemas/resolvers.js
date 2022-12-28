@@ -20,7 +20,7 @@ const resolvers = {
       if (!userId || !isAdmin) {
         return new Error("please log in as an admin to see employee data");
       }
-      const employee = await Employee.findOne(args);
+      const employee = await Employee.findOne({ args });
       return employee;
     },
     //---------------------------------^up to^----------------------------------\\
@@ -33,6 +33,28 @@ const resolvers = {
       }
       const employees = await Employee.find();
       return employees;
+    },
+
+    checkBay: async (parent, { bayID }, context) => {
+      const userId = context.user._id;
+      if (!userId) {
+        return new Error("please log in to view bays");
+      }
+      const returnBay = await Bay.findOne({ bayID });
+      if (!bayID) {
+        return new Error(`unable to locate a bay by id ${bayID}`);
+      }
+      return returnBay;
+    },
+    checkHistory: async (parent, args, context) => {
+      //check all history, needs admin
+      const userId = context.user._id;
+      const isAdmin = context.user.isAdmin;
+      if (!userId || !isAdmin) {
+        return new Error("Please log in as an admin to check history");
+      }
+      const returnedHistory = await HistoryEvent.find({});
+      return returnedHistory;
     },
   },
   Mutation: {
