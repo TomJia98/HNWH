@@ -20,7 +20,7 @@ const resolvers = {
       if (!userId || !isAdmin) {
         return new Error("please log in as an admin to see employee data");
       }
-      const employee = await Employee.find(args);
+      const employee = await Employee.findOne(args);
       return employee;
     },
     //---------------------------------^up to^----------------------------------\\
@@ -31,11 +31,40 @@ const resolvers = {
       if (!userId || !isAdmin) {
         return new Error("please log in as an admin to see employees");
       }
-      const employees = await User.find();
+      const employees = await Employee.find();
       return employees;
     },
   },
   Mutation: {
+    addEmployee: async (parent, args, context) => {
+      // adds a new employee, returns the new employee, requires sign in and admin priv
+      const userId = context.user._id;
+      const isAdmin = context.user.isAdmin;
+      if (!userId || !isAdmin) {
+        return new Error("please log in as an admin to add an employee");
+      }
+      try {
+        const newEmployee = await Employee.create(args);
+        return newEmployee;
+      } catch (e) {
+        return new Error(e);
+      }
+    },
+    deleteEmployee: async (parent, { employeeID }, context) => {
+      const userId = context.user._id;
+      const isAdmin = context.user.isAdmin;
+      if (!userId || !isAdmin) {
+        return new Error("please log in as an admin to delete an employee");
+      }
+      try {
+        const delEmployee = await Employee.findOneAndDelete(employeeID);
+        // pass in the employees id to delete
+        return `employee ${employeeID} has had there data deleted`;
+      } catch (e) {
+        return new Error(e);
+      }
+    },
+
     createLink: async (
       //createing the linking code
       parent,

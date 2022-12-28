@@ -5,6 +5,7 @@ const employeeSchema = new Schema({
   employeeID: {
     type: String,
     required: true,
+    unique: true,
   },
   password: {
     type: String,

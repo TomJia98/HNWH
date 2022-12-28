@@ -9,10 +9,10 @@ const itemSchema = new Schema({
     type: String,
     required: false,
   },
-  isInStock: {
-    type: Boolean,
-    required: true,
-  },
+  // isInStock: {
+  //   type: Boolean,
+  //   required: true,
+  // }, // can be done by checking if onHand = =
   onHand: {
     type: Number,
   },
