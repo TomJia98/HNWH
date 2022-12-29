@@ -3,6 +3,16 @@ const { Bay, Item, HistoryEvent, Employee } = require("../models");
 const { signToken } = require("../utils/auth");
 // const { GraphQLDateTime } = require("graphql-iso-date");
 
+// function requireLogIn(userId, isAdmin) {
+//   if (isAdmin !== undefined) {
+//     if (!userId || !isAdmin) {
+//       return new Error("please log in as an admin");
+//     }
+//   } else {if( !userId) {
+//   return new Error("please log in");
+//   }}
+// };
+
 const resolvers = {
   Query: {
     item: async (parent, { productCode }, context) => {
@@ -73,15 +83,35 @@ const resolvers = {
       }
     },
 
-    updateEmployee: async (parent, { employeeID }, context) => {
+    updateEmployee: async (
+      parent,
+      {
+        employeeID,
+        password,
+        employeeFirstName,
+        employeeLastName,
+        history,
+        isAdmin,
+      },
+      context
+    ) => {
       const userId = context.user._id;
       const isAdmin = context.user.isAdmin;
       if (!userId || !isAdmin) {
         return new Error("please log in as an admin to update an employee");
       }
-
-      const updatedEmployee = await Employee.findOneAndUpdate({ employeeID });
+      try {
+        const updatedEmployee = await Employee.findOneAndUpdate(
+          { employeeID },
+          { password, employeeFirstName, employeeLastName, history, isAdmin },
+          { new: true }
+        );
+        return updatedEmployee;
+      } catch (e) {
+        return new Error(e);
+      }
     },
+
     deleteEmployee: async (parent, { employeeID }, context) => {
       const userId = context.user._id;
       const isAdmin = context.user.isAdmin;
@@ -90,13 +120,44 @@ const resolvers = {
       }
       try {
         const delEmployee = await Employee.findOneAndDelete(employeeID);
+        delEmployee
         // pass in the employees id to delete
         return `employee ${employeeID} has had there data deleted`;
       } catch (e) {
         return new Error(e);
       }
     },
+    addBay: async (parent, args, context) => {
+      const userId = context.user._id;
+      const isAdmin = context.user.isAdmin;
+      if (!userId || !isAdmin) {
+        return new Error("please log in as an admin");
+      }
+      try {
+        const newBay = await Bay.create({ ...args });
+        return newBay;
+      } catch (e) {
+        return new Error(e);
+      }
+    },
 
+    addMultipleBays: async (parent, {isleWidth, isleHeight, isleNumber, bayType}, context) => {
+      //pass in height and width params 
+      const userId = context.user._id;
+      const isAdmin = context.user.isAdmin;
+      if (!userId || !isAdmin) {
+        return new Error("please log in as an admin");
+      }
+      try {
+        for (i=0;i<isleWidth; i++) {
+for (k=0;k<isleHeight; i++) {
+  
+}
+        }
+      } catch (e) {
+        return new Error(e);
+      }
+    }
     createLink: async (
       //createing the linking code
       parent,
